@@ -3,10 +3,6 @@ from collections import Counter
 import xml.etree.ElementTree as ET
 
 def count_yolo_labels(label_dir):
-    """
-    label_dir: 存放 YOLO txt 标注的文件夹
-    每一行格式: class_id cx cy w h ...
-    """
     counts = Counter()
     total_boxes = 0
 
@@ -21,7 +17,7 @@ def count_yolo_labels(label_dir):
                     if not line:
                         continue
                     parts = line.split()
-                    class_id = parts[0]   # 第一个就是类别 id
+                    class_id = parts[0]
                     counts[class_id] += 1
                     total_boxes += 1
 
@@ -29,10 +25,6 @@ def count_yolo_labels(label_dir):
 
 
 def count_voc_labels(xml_dir):
-    """
-    xml_dir: 存放 VOC xml 标注的文件夹
-    统计 <object><name>xxx</name></object> 中的类别名
-    """
     counts = Counter()
     total_boxes = 0
 
@@ -61,14 +53,14 @@ def count_voc_labels(xml_dir):
 
 
 if __name__ == "__main__":
-    mode = "yolo"   # "yolo" 或 "voc"
+    mode = "voc"
 
     if mode == "yolo":
-        label_dir = r"C:\Users\20433\Desktop\Hickory_Data_new\4.数据增强后的训练集\labels"
+        label_dir = r"C:\Users\20433\Desktop\数据集论文材料\CaryaData\labels\YOLO"
         counts, total = count_yolo_labels(label_dir)
         print(f"=== YOLO 标注统计结果（文件夹：{label_dir}）===")
     else:
-        xml_dir = r"...你的VOC路径..."
+        xml_dir = r"C:\Users\20433\Desktop\数据集论文材料\CaryaData\labels\VOC"
         counts, total = count_voc_labels(xml_dir)
         print(f"=== VOC 标注统计结果（文件夹：{xml_dir}）===")
 
