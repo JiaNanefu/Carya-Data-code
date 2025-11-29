@@ -5,26 +5,25 @@ import glob
 from sklearn.model_selection import train_test_split
 import xml.etree.ElementTree as ET
 
-# 您需要配置的参数
-# 路径设置
-SOURCE_IMAGE_DIR = r"C:\Users\20433\Desktop\Hickory Data\640\images"  # 原始图片文件夹路径
-SOURCE_LABEL_DIR = r"C:\Users\20433\Desktop\Hickory Data\640\labels\YOLO"  # 原始标注文件夹路径
-OUTPUT_DIR =r"C:\Users\20433\Desktop\Hickory Data\划分后的数据集"  # 划分后数据集的输出根目录
+# 基本配置
+# 路径
+SOURCE_IMAGE_DIR = r"C:\Users\20433\Desktop\数据集论文材料\CaryaData\Scaled\images"  # 原始图片目录
+SOURCE_LABEL_DIR = r"C:\Users\20433\Desktop\数据集论文材料\CaryaData\labels\YOLO"  # 对应标签目录
+OUTPUT_DIR =r"C:\Users\20433\Desktop\数据集论文材料\CaryaData\CaryaData_YOLO"  # 划分后数据集输出根目录
 
 # 文件扩展名
-IMAGE_EXTENSION = ".jpg"  # 您的图片扩展名 (例如: .jpg, .png)
-LABEL_EXTENSION = ".txt"  # 您的标注扩展名 (例如: .txt, .xml)
+IMAGE_EXTENSION = ".jpg"  # 图片扩展名 (如 .jpg, .png)
+LABEL_EXTENSION = ".txt"  # 标签扩展名 (如 .txt, .xml)
 
-# 划分设置
-RAREST_CLASS_ID = 2  # 您的最稀有类别的ID (您提到的是 2)
+# 划分参数
+RAREST_CLASS_ID = 2  # 稀有类别的 ID
 SPLIT_RATIOS = {'train': 0.6, 'val': 0.2, 'test': 0.2}
-RANDOM_SEED = 42  # 设置随机种子以便结果可复现
+RANDOM_SEED = 42  # 随机种子，保持结果可复现
 
 def check_for_rare_class(label_path, rarest_id):
     """
-    检查单个标注文件是否包含最稀有类别。
+    检查单个标注文件中是否包含稀有类别。
     """
-
     if LABEL_EXTENSION == ".txt":
         try:
             with open(label_path, 'r') as f:
@@ -37,25 +36,22 @@ def check_for_rare_class(label_path, rarest_id):
                         return True
             return False
         except Exception as e:
-            print(f"Error reading {label_path}: {e}")
+            print(f"读取 {label_path} 出错: {e}")
             return False
 
-    # === 示例 2: 适用于 PASCAL VOC (.xml) 格式 ===
-    # 格式假定为: <object><name>class_name</name>...</object>
+    # 适用于 PASCAL VOC (.xml) 格式
+    # 假定结构: <object><name>class_name</name>...</object>
     elif LABEL_EXTENSION == ".xml":
         try:
             tree = ET.parse(label_path)
             root = tree.getroot()
-            # 假设您的类别 '2' 在xml中存储为字符串 "2" 或其他名称
-            # *** 您可能需要将 'str(rarest_id)' 修改为 'your_class_name' ***
             for obj in root.findall('object'):
                 name = obj.find('name').text
-                # if name == "your_class_name":
                 if name == str(rarest_id):
                     return True
             return False
         except Exception as e:
-            print(f"Error parsing {label_path}: {e}")
+            print(f"解析 {label_path} 出错: {e}")
             return False
 
     else:
